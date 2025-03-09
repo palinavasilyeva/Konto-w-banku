@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using System;
 
 namespace ClassLibrary1
 {
@@ -10,7 +10,6 @@ namespace ClassLibrary1
 
         public bool Zablokowane => zablokowane;
 
-
         public Konto(string klient, decimal bilansNaStart = 0)
         {
             this.klient = klient;
@@ -19,7 +18,6 @@ namespace ClassLibrary1
 
         public string Nazwa => klient;
         public decimal Bilans => bilans;
-
 
         public void Wplata(decimal kwota)
         {
@@ -61,10 +59,12 @@ namespace ClassLibrary1
         {
             zablokowane = false;
         }
+
         protected void SetBilans(decimal nowyBilans)
         {
             bilans = nowyBilans;
         }
+
         public void UstawBilans(decimal nowyBilans)
         {
             bilans = nowyBilans;
@@ -96,6 +96,7 @@ namespace ClassLibrary1
             }
 
             base.Wplata(kwota);
+            SetBilans(Bilans + kwota);
 
             // Jeśli debet został wykorzystany i konto ma saldo większe niż 0, to odblokowujemy konto
             if (Bilans > 0 && debetWykorzystany)
@@ -127,7 +128,7 @@ namespace ClassLibrary1
                 jednorazowyLimitDebetowy -= (kwota - Bilans);
                 SetBilans(0);
                 debetWykorzystany = true;
-                Blokuj();  
+                Blokuj();
             }
             else
             {
@@ -135,8 +136,7 @@ namespace ClassLibrary1
             }
         }
 
-
-        public new decimal Bilans
+        public decimal EffectiveBilans
         {
             get
             {
@@ -178,20 +178,17 @@ namespace ClassLibrary1
 
             konto.Wplata(kwota);
 
-            
             if (konto.Bilans > 0 && debetWykorzystany)
             {
                 debetWykorzystany = false;
                 konto.Odblokuj();
             }
-            
             else if (konto.Bilans == 0 && debetWykorzystany)
             {
                 debetWykorzystany = false;
                 konto.Odblokuj();
             }
         }
-
 
         public void WyplataKontoLimit(decimal kwota)
         {
@@ -212,7 +209,7 @@ namespace ClassLibrary1
             else if (kwota - konto.Bilans <= JednorazowyLimitDebetowy)
             {
                 JednorazowyLimitDebetowy -= (kwota - konto.Bilans);
-                konto.UstawBilans(0); 
+                konto.UstawBilans(0);
                 debetWykorzystany = true;
                 konto.Blokuj();
             }
@@ -221,7 +218,5 @@ namespace ClassLibrary1
                 throw new InvalidOperationException("Przekroczono dostępny debet.");
             }
         }
-
     }
-
 }

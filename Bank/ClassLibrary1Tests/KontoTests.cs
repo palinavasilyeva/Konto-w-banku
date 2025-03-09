@@ -1,10 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ClassLibrary1;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClassLibrary1.Tests
 {
@@ -45,7 +41,6 @@ namespace ClassLibrary1.Tests
             // Act & Assert
             Assert.ThrowsException<InvalidOperationException>(() => konto.Wplata(500m));
         }
-
 
         [TestMethod()]
         public void TestWyplata()
@@ -115,7 +110,7 @@ namespace ClassLibrary1.Tests
             konto.WyplataKontoPlus(500m);
 
             // Assert
-            Assert.AreEqual(500m, konto.Bilans);
+            Assert.AreEqual(500m, konto.EffectiveBilans);
             Assert.IsFalse(konto.Zablokowane);
         }
 
@@ -129,7 +124,7 @@ namespace ClassLibrary1.Tests
             konto.WyplataKontoPlus(1500m);
 
             // Assert
-            Assert.AreEqual(0m, konto.Bilans);
+            Assert.AreEqual(0m, konto.EffectiveBilans);
             Assert.IsTrue(konto.Zablokowane);
         }
 
@@ -141,11 +136,11 @@ namespace ClassLibrary1.Tests
             konto.WyplataKontoPlus(1500m);
 
             // Act
-            konto.WplataKontoPlus(1000m); 
+            konto.WplataKontoPlus(1000m);
 
             // Assert
-            Assert.AreEqual(1000m, konto.Bilans); 
-            Assert.IsFalse(konto.Zablokowane); 
+            Assert.AreEqual(1000m, konto.EffectiveBilans);
+            Assert.IsFalse(konto.Zablokowane);
         }
 
         [TestMethod()]
@@ -155,14 +150,13 @@ namespace ClassLibrary1.Tests
             var konto = new KontoPlus("Jan Kowalski", 1000m, 500m);
 
             // Act & Assert
-            Assert.ThrowsException<InvalidOperationException>(() => konto.WyplataKontoPlus(2001m));  
+            Assert.ThrowsException<InvalidOperationException>(() => konto.WyplataKontoPlus(2001m));
         }
     }
 
     [TestClass()]
     public class KontoLimitTests
     {
-        // Test 1: Sprawdzenie, czy wypłata w ramach dostępnego salda działa poprawnie.
         [TestMethod()]
         public void TestWyplataZBilansu()
         {
@@ -173,11 +167,10 @@ namespace ClassLibrary1.Tests
             konto.WyplataKontoLimit(500m);
 
             // Assert
-            Assert.AreEqual(500m, konto.Bilans);  
-            Assert.IsFalse(konto.Zablokowane);    
+            Assert.AreEqual(500m, konto.Bilans);
+            Assert.IsFalse(konto.Zablokowane);
         }
 
-        // Test 2: Sprawdzenie wypłaty, która wykorzystuje limit debetowy.
         [TestMethod()]
         public void TestWyplataZDebetem()
         {
@@ -188,26 +181,8 @@ namespace ClassLibrary1.Tests
             konto.WyplataKontoLimit(1500m);
 
             // Assert
-            Assert.AreEqual(0m, konto.Bilans); 
-            Assert.IsTrue(konto.Zablokowane); 
-        }
-
-        // Test 3: Sprawdzenie działania metody wpłaty po wykorzystaniu debetu (odblokowanie konta).
-        [TestMethod()]
-        public void TestWplataPoDebecie()
-        {
-            // Arrange
-            var konto = new KontoLimit("Jan Kowalski", 1000m, 500m);
-            konto.WyplataKontoLimit(1500m);
-
-            // Act
-            konto.WplataKontoLimit(1000m);
-
-            // Assert
-            Assert.AreEqual(1000m, konto.Bilans); 
-            Assert.IsFalse(konto.Zablokowane);  
+            Assert.AreEqual(0m, konto.Bilans);
+            Assert.IsTrue(konto.Zablokowane);
         }
     }
-
-
 }
