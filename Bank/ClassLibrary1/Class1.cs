@@ -20,27 +20,28 @@
 
         public void Wplata(decimal kwota)
         {
-            if (kwota <= 0)
-            {
-                throw new ArgumentException("Kwota musi być dodatnia.");
-            }
             if (zablokowane)
             {
                 throw new InvalidOperationException("Konto zablokowane.");
+            }
+            if (kwota <= 0)
+            {
+                throw new ArgumentException("Kwota musi być dodatnia.");
             }
             bilans += kwota;
         }
 
         public void Wyplata(decimal kwota)
         {
-            if (kwota <= 0)
-            {
-                throw new ArgumentException("Kwota musi być dodatnia.");
-            }
             if (zablokowane)
             {
                 throw new InvalidOperationException("Konto zablokowane.");
             }
+            if (kwota <= 0)
+            {
+                throw new ArgumentException("Kwota musi być dodatnia.");
+            }
+            
             if (bilans < kwota)
             {
                 throw new InvalidOperationException("Brak środków na koncie.");
