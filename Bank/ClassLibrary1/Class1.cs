@@ -10,11 +10,6 @@
 
         public Konto(string klient, decimal bilansNaStart = 0)
         {
-            if (string.IsNullOrWhiteSpace(klient))
-            {
-                throw new ArgumentException("Nazwa klienta nie może być pusta.");
-            }
-
             this.klient = klient;
             this.bilans = bilansNaStart;
         }
