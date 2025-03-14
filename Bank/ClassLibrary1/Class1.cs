@@ -90,20 +90,18 @@ namespace ClassLibrary1
         // Metoda wpłaty na KontoPlus
         public void WplataKontoPlus(decimal kwota)
         {
-            if (Zablokowane)
+            if (Zablokowane && !debetWykorzystany) // Если счет заблокирован не из-за дебета, бросаем исключение
             {
                 throw new InvalidOperationException("Konto zablokowane.");
             }
 
-            base.Wplata(kwota);
-            SetBilans(Bilans + kwota);
-
-            // Jeśli debet został wykorzystany i konto ma saldo większe niż 0, to odblokowujemy konto
-            if (Bilans > 0 && debetWykorzystany)
+            if (debetWykorzystany)
             {
+                Odblokuj(); // Разблокируем счет перед пополнением
                 debetWykorzystany = false;
-                Odblokuj();
             }
+
+            base.Wplata(kwota);
         }
 
         // Metoda wypłaty z KontaPlus
