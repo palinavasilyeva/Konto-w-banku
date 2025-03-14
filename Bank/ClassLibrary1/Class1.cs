@@ -4,9 +4,9 @@ namespace ClassLibrary1
 {
     public class Konto
     {
-        private string klient;  //nazwa klienta
-        private decimal bilans;  //aktualny stan środków na koncie
-        private bool zablokowane = false; //stan konta
+        private string klient; 
+        private decimal bilans; 
+        private bool zablokowane = false; 
 
         public bool Zablokowane => zablokowane;
 
@@ -73,8 +73,8 @@ namespace ClassLibrary1
 
     public class KontoPlus : Konto
     {
-        private decimal jednorazowyLimitDebetowy; // Jednorazowy limit debetowy
-        private bool debetWykorzystany = false;   // Flaga, czy debet został wykorzystany
+        private decimal jednorazowyLimitDebetowy; 
+        private bool debetWykorzystany = false;
 
         public decimal JednorazowyLimitDebetowy
         {
@@ -90,14 +90,14 @@ namespace ClassLibrary1
         // Metoda wpłaty na KontoPlus
         public void WplataKontoPlus(decimal kwota)
         {
-            if (Zablokowane && !debetWykorzystany) // Если счет заблокирован не из-за дебета, бросаем исключение
+            if (Zablokowane && !debetWykorzystany) 
             {
                 throw new InvalidOperationException("Konto zablokowane.");
             }
 
             if (debetWykorzystany)
             {
-                Odblokuj(); // Разблокируем счет перед пополнением
+                Odblokuj(); 
                 debetWykorzystany = false;
             }
 
@@ -165,7 +165,20 @@ namespace ClassLibrary1
 
         public string Nazwa => konto.Nazwa;
 
-        public decimal Bilans => debetWykorzystany ? konto.Bilans - JednorazowyLimitDebetowy : konto.Bilans;
+        public decimal Bilans
+        {
+            get
+            {
+                if (debetWykorzystany)
+                {
+                    return konto.Bilans - JednorazowyLimitDebetowy;
+                }
+                else
+                {
+                    return konto.Bilans;
+                }
+            }
+        }
 
         public void WplataKontoLimit(decimal kwota)
         {
@@ -223,8 +236,7 @@ namespace ClassLibrary1
         static void Main()
         {
             Console.WriteLine("--- Symulacja działania kont ---\n");
-
-            // Konto standardowe
+            
             Konto konto = new Konto("Jan Kowalski", 1000m);
             Console.WriteLine($"Utworzono konto dla {konto.Nazwa}, bilans: {konto.Bilans} zł");
 
